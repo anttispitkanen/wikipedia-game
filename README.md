@@ -5,10 +5,10 @@ Nyt sitä ei tarvitse pelata itse!
 
 Säännöt ovat yksinkertaiset – aloitetaan jostain artikkelista (url tai vapaa haku), ja mennään siitä
 ensimmäiseen leipätekstissä olevaan linkkiin, joka ei ole
--sulkujen sisällä,
--vuosiluku,
--päivämäärä tai
--yläviite (hakasulut)
+* sulkujen sisällä,
+* vuosiluku,
+* päivämäärä tai
+* yläviite (hakasulut)
 
 Lasketaan kuinka monta artikkelia pitää käydä läpi, että päästään filosofiaan.
 
