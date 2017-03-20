@@ -23,6 +23,9 @@ Nyt Sinäkin voit pelata, asenna vain seuraavilla ohjeilla (Node.js vaaditaan):
 git clone https://github.com/anttispitkanen/wikipedia-game.git
 ```
 ```
+cd wikipedia-game
+```
+```
 npm install
 ```
 ```
