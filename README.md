@@ -10,8 +10,22 @@ ensimmäiseen leipätekstissä olevaan linkkiin, joka ei ole
 * päivämäärä tai
 * yläviite (hakasulut)
 
-Lasketaan kuinka monta artikkelia pitää käydä läpi, että päästään filosofiaan.
+...ja seuraavissa artikkelissa sama homma.
+
+Peli voitetaan, jos päästään filosofiaan. Kuinka pitkän polun löydät?
 
 Peli hävitään, jos joudutaan luuppiin tai umpikujaan (=artikkeliin ilman kelvollisia linkkejä).
 
+##Asennus
+
+Nyt Sinäkin voit pelata, asenna vain seuraavilla ohjeilla (Node.js vaaditaan):
+```
+git clone https://github.com/anttispitkanen/wikipedia-game.git
+```
+```
+npm install
+```
+```
+node index.js
+```
 Onnea peliin!
