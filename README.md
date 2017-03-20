@@ -16,7 +16,7 @@ Peli voitetaan, jos päästään filosofiaan. Kuinka pitkän polun löydät?
 
 Peli hävitään, jos joudutaan luuppiin tai umpikujaan (=artikkeliin ilman kelvollisia linkkejä).
 
-##Asennus
+## Asennus
 
 Nyt Sinäkin voit pelata, asenna vain seuraavilla ohjeilla (Node.js vaaditaan):
 ```
