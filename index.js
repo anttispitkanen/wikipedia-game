@@ -177,6 +177,7 @@ function filterOutWrongLinks(link) {
         !linkText.match(/^\d+$/) && //filter out years
         !linkHref.match(/^\/wiki\/\d+\..+kuuta/) && //filter out dates
         !linkHref.match(/^\/wiki\/Tiedosto:/) && //filter out files
+        !linkHref.match(/^\/wiki\/Wikipedia:/) && //filter out whatever these are
         !linkHref.match(/^\/wiki\/Toiminnot:/)) { //filter out actions
 
         return true;
