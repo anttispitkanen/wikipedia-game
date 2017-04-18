@@ -22,7 +22,7 @@ let currentURL;
 
 console.log('\n========================================');
 console.log('\nPelataan Wikipedia-peliä!');
-console.log('Syötä mikä vaan suomenkielinen wikipedia-artikkeli (koko url tai hakusana):');
+console.log('Syötä mikä vaan suomenkielinen wikipedia-artikkeli (koko url tai hakusana), tyhjä hakee satunnaisen:');
 
 rl.prompt();
 
@@ -31,7 +31,20 @@ rl.on('line', (line) => {
 
     line = line.trim();
 
-    if (line.startsWith('http://') || line.startsWith('https://')) { //test if line is a query string or a link
+
+    if (line.length === 0) {
+        // THIS WAY WITH EMPTY SEARCH
+        console.log('tässä random artikkeli:');
+        fetchRandomArticle().then(res => {
+            console.log(res +'\n');
+
+            fetchWithQueryString(res).then(startURL => {
+                playGame(startURL);
+            })
+        });
+
+    //test if line is a query string or a link
+    } else if (line.startsWith('http://') || line.startsWith('https://')) {
 
         //THIS WAY WITH A FULL URL GIVEN
         if (validateURL(line)) { //test if link is valid
@@ -47,8 +60,7 @@ rl.on('line', (line) => {
         //THIS WAY WITH A SEARCH TERM
 
         //search the wikipedia API with the given search term
-        fetchWithQueryString(line).then(fulfilled => {
-            startURL = fulfilled;
+        fetchWithQueryString(line).then(startURL => {
             playGame(startURL);
         })
     }
@@ -162,8 +174,36 @@ function fetchWithQueryString(query) {
         console.log(err);
         process.exit(0);
     })
-
 }
+
+
+function fetchRandomArticle() {
+    // rnnamespace=0 searches from articles
+    const randomURL = 'https://fi.wikipedia.org/w/api.php?action=query&list=random&format=json&rnlimit=1&rnnamespace=0';
+
+    return axios.get(randomURL).then(response => {
+
+        let newLink = response.data.query.random[0].title;
+
+        if (!newLink) {
+            console.log('ei löydy linkkiä :/');
+            process.exit(0);
+        }
+
+        return newLink;
+
+    }).catch(err => {
+        console.log('########## ERROR ##########');
+        console.log(err);
+        process.exit(0);
+    })
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+/* FILTERS */
 
 
 //takes a link (cheerio element) as input and returns true if it's valid, false otherwise
