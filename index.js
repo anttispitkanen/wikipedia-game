@@ -178,7 +178,9 @@ function filterOutWrongLinks(link) {
         !linkHref.match(/^\/wiki\/\d+\..+kuuta/) && //filter out dates
         !linkHref.match(/^\/wiki\/Tiedosto:/) && //filter out files
         !linkHref.match(/^\/wiki\/Wikipedia:/) && //filter out whatever these are
-        !linkHref.match(/^\/wiki\/Toiminnot:/)) { //filter out actions
+        !linkHref.match(/^\/wiki\/Toiminnot:/) && //filter out actions
+        !linkHref.match(/^\/wiki\/Ohje:/)
+    ) {
 
         return true;
     }
@@ -190,7 +192,10 @@ function filterOutWrongLinks(link) {
 function validateURL(url) {
     if (url.match(/fi.wikipedia.org\/wiki\//) &&
         !url.match(/fi.wikipedia.org\/wiki\/Toiminnot:/) &&
-        !url.match(/fi.wikipedia.org\/wiki\/Tiedosto:/)) { //test if link is valid)
+        !url.match(/fi.wikipedia.org\/wiki\/Tiedosto:/) &&
+        !url.match(/fi.wikipedia.org\/wiki\/Ohje:/) &&
+        !url.match(/fi.wikipedia.org\/wiki\/Wikipedia:/)
+    ) { //test if link is valid)
 
         return true;
     }
