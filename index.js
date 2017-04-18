@@ -73,7 +73,7 @@ rl.on('line', (line) => {
 //the actual crawling through links
 function playGame(startURL) {
 
-    let currentURL = startURL;
+    let currentURL = encodeURI(startURL);
 
     let results = [];
     let count = 0;
