@@ -166,7 +166,8 @@ function fetchWithQueryString(query) {
             process.exit(0);
         }
 
-        return newLink;
+        // decode URI component to get proper title
+        return decodeURIComponent(newLink);
 
     })
     .catch(err => {
@@ -190,7 +191,8 @@ function fetchRandomArticle() {
             process.exit(0);
         }
 
-        return newLink;
+        // decode URI component to get proper title
+        return decodeURIComponent(newLink);
 
     }).catch(err => {
         console.log('########## ERROR ##########');
