@@ -58,7 +58,6 @@ rl.on('line', (line) => {
         }
     } else {
         //THIS WAY WITH A SEARCH TERM
-
         //search the wikipedia API with the given search term
         fetchWithQueryString(line).then(startURL => {
             playGame(startURL);
@@ -86,6 +85,7 @@ function playGame(startURL) {
         (callback) => {
 
             axios.get(currentURL).then(response => {
+
                 let $ = cheerio.load(response.data);
                 console.log($('.firstHeading').text());
 
@@ -147,7 +147,6 @@ function playGame(startURL) {
         }
     )
 }
-
 
 
 
@@ -219,7 +218,7 @@ function filterOutWrongLinks(link) {
         !linkText.match(/^\d+$/) && //filter out years
         !linkHref.match(/^\/wiki\/\d+\..+kuuta/) && //filter out dates
         !linkHref.match(/^\/wiki\/Tiedosto:/) && //filter out files
-        !linkHref.match(/^\/wiki\/Wikipedia:/) && //filter out whatever these are
+        !linkHref.match(/^\/wiki\/Wikipedia:/) && //filter out whatever utility links these are
         !linkHref.match(/^\/wiki\/Toiminnot:/) && //filter out actions
         !linkHref.match(/^\/wiki\/Ohje:/)
     ) {
@@ -237,7 +236,7 @@ function validateURL(url) {
         !url.match(/fi.wikipedia.org\/wiki\/Tiedosto:/) &&
         !url.match(/fi.wikipedia.org\/wiki\/Ohje:/) &&
         !url.match(/fi.wikipedia.org\/wiki\/Wikipedia:/)
-    ) { //test if link is valid)
+    ) {
 
         return true;
     }
