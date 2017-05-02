@@ -42,49 +42,6 @@ console.log('Syötä mikä vaan suomenkielinen wikipedia-artikkeli (koko url tai
 
 rl.prompt();
 
-// rl.on('line', (line) => {
-//     console.log();
-//
-//     line = line.trim();
-//
-//
-//     if (line.length === 0) {
-//         // THIS WAY WITH EMPTY SEARCH
-//         console.log('tässä random artikkeli:');
-//         fetchRandomArticle().then(res => {
-//             console.log(res +'\n');
-//
-//             fetchWithQueryString(res).then(startURL => {
-//                 playGame(startURL);
-//             })
-//         });
-//
-//     //test if line is a query string or a link
-//     } else if (line.startsWith('http://') || line.startsWith('https://')) {
-//
-//         //THIS WAY WITH A FULL URL GIVEN
-//         if (validateURL(line)) { //test if link is valid
-//
-//             startURL = line.trim();
-//             playGame(startURL);
-//
-//         } else {
-//             console.log('Ei tuollainen haku kelpaa :D\n');
-//             process.exit(0);
-//         }
-//     } else {
-//         //THIS WAY WITH A SEARCH TERM
-//         //search the wikipedia API with the given search term
-//         fetchWithQueryString(line).then(startURL => {
-//             playGame(startURL);
-//         })
-//     }
-//
-// }).on('close', () => {
-//     process.exit(0);
-// })
-
-
 
 rl.on('line', async (line) => {
     console.log();
@@ -112,7 +69,7 @@ rl.on('line', async (line) => {
             console.log('Ei tuollainen haku kelpaa :D\n');
             process.exit(0);
         }
-        
+
     } else {
         //THIS WAY WITH A SEARCH TERM
         //search the wikipedia API with the given search term

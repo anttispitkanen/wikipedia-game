@@ -1,3 +1,14 @@
+/*
+Wikipedia game
+
+A script for finding the article about philosophy on Wikipedia.
+
+This version uses promises.
+
+Antti Pitkänen 2017
+*/
+
+
 const cheerio = require('cheerio');
 const axios = require('axios');
 const readline = require('readline');
