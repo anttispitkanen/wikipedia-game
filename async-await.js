@@ -21,17 +21,12 @@ const rl = readline.createInterface({
 
 
 const wikiURL = 'https://fi.wikipedia.org';
-
 const targetLink = 'https://fi.wikipedia.org/wiki/Filosofia';
-
 // rnnamespace=0 searches from articles
 const randomURL = 'https://fi.wikipedia.org/w/api.php?action=query&list=random&format=json&rnlimit=1&rnnamespace=0';
-
 const wikiAPI = 'https://fi.wikipedia.org/w/api.php?action=opensearch&redirects=resolve&limit=1&search=';
 
-
 let startURL = null;
-
 let currentURL;
 
 console.log('\n========================================');
@@ -39,7 +34,6 @@ console.log('\nPelataan Wikipedia-peliä!');
 console.log('Syötä mikä vaan suomenkielinen wikipedia-artikkeli (koko url tai hakusana), tyhjä hakee satunnaisen:');
 
 rl.prompt();
-
 
 rl.on('line', (line) => {
     console.log();
@@ -87,7 +81,6 @@ function playWithFullURL(url) {
 }
 
 
-
 //the actual crawling through links
 async function playGame(startURL) {
 
@@ -95,7 +88,6 @@ async function playGame(startURL) {
 
     let results = [];
     let count = 0;
-    let linksInSingleArticle = [];
 
     asy.whilst(
 
@@ -106,42 +98,20 @@ async function playGame(startURL) {
             let response = await axios.get(currentURL);
             let $ = cheerio.load(response.data);
             console.log($('.firstHeading').text());
-            let pText = $('#mw-content-text > p').text();
-            let indexOfFirstOpeningParenthesis = pText.indexOf('('); //find the indexOf first '('
-            let indexOfFirstClosingParenthesis = pText.indexOf(')'); //find the indexOf first ')'
 
-            $('#mw-content-text > p a').each((i, elem) => {
-                let link = $(elem);
-                if (linkIsValid(link)) {
-                    let i = pText.indexOf(link.text());
+            try {
+                let nextLink = findNextLink($);
+                results.push(currentURL);
+                count++;
+                currentURL = wikiURL + nextLink;
+                console.log(currentURL + '\n' + count + '\n');
 
-                    if (!(i > indexOfFirstOpeningParenthesis && i < indexOfFirstClosingParenthesis)) {
-                        linksInSingleArticle.push(link.attr('href'));
-                    }
-                }
-            })
-
-            results.push(currentURL);
-
-            //in case there is no link to follow
-            if (!linksInSingleArticle[0]) {
-                console.log('\nHups!');
-                console.log(`${$('.firstHeading').text()} ei johtanut mihinkään\n`);
-                console.log(`¯\\_(ツ)_/¯\n\n`);
+            } catch (e) {
+                console.log(`\nHups!\n${$('.firstHeading').text()} ei johtanut mihinkään\n¯\\_(ツ)_/¯\n\n`);
                 process.exit(0);
             }
 
-            currentURL = wikiURL + linksInSingleArticle[0];
-
-            console.log(currentURL);
-
-            count++;
-            console.log(count + '\n');
-
-            linksInSingleArticle = [];
-
             callback(null, count);
-
         },
 
         (err, n) => {
@@ -155,6 +125,31 @@ async function playGame(startURL) {
             process.exit(0);
         }
     )
+}
+
+// takes a cheerio element of the loaded response data, returns the first valid link
+function findNextLink($) {
+    let pText = $('#mw-content-text > p').text();
+    let indexOfFirstOpeningParenthesis = pText.indexOf('('); //find the indexOf first '('
+    let indexOfFirstClosingParenthesis = pText.indexOf(')'); //find the indexOf first ')'
+    let linksInSingleArticle = [];
+
+    $('#mw-content-text > p a').each((index, elem) => {
+        let link = $(elem);
+        if (linkIsValid(link)) {
+            let i = pText.indexOf(link.text());
+
+            if (!(i > indexOfFirstOpeningParenthesis && i < indexOfFirstClosingParenthesis)) {
+                linksInSingleArticle.push(link.attr('href'));
+            }
+        }
+    })
+
+    if (linksInSingleArticle[0]) {
+        return linksInSingleArticle[0];
+    } else {
+        throw new Error();
+    }
 }
 
 
