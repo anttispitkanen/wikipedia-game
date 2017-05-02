@@ -11,15 +11,13 @@ Antti Pitkänen 2017
 const cheerio = require('cheerio');
 const axios = require('axios');
 const readline = require('readline');
-const async = require('async');
+const asy = require('async');
 
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
     prompt: '> '
 })
-
-
 
 
 const wikiURL = 'https://fi.wikipedia.org';
@@ -43,38 +41,21 @@ console.log('Syötä mikä vaan suomenkielinen wikipedia-artikkeli (koko url tai
 rl.prompt();
 
 
-rl.on('line', async (line) => {
+rl.on('line', (line) => {
     console.log();
-
     line = line.trim();
-
 
     if (line.length === 0) {
         // THIS WAY WITH EMPTY SEARCH
-        console.log('tässä random artikkeli:');
-        let article = await fetchRandomArticle();
-        console.log(article + '\n');
-        let startURL = await fetchWithQueryString(article);
-        playGame(startURL);
+        playRandom();
 
-    //test if line is a query string or a link
     } else if (line.startsWith('http://') || line.startsWith('https://')) {
-
         //THIS WAY WITH A FULL URL GIVEN
-        if (validateURL(line)) { //test if link is valid
-            startURL = line.trim();
-            playGame(startURL);
-
-        } else {
-            console.log('Ei tuollainen haku kelpaa :D\n');
-            process.exit(0);
-        }
+        playWithFullURL(line);
 
     } else {
         //THIS WAY WITH A SEARCH TERM
-        //search the wikipedia API with the given search term
-        let startURL = await fetchWithQueryString(line.trim());
-        playGame(startURL);
+        playWithSearchTerm(line);
     }
 
 }).on('close', () => {
@@ -82,8 +63,33 @@ rl.on('line', async (line) => {
 })
 
 
+async function playRandom() {
+    console.log('tässä random artikkeli:');
+    let article = await fetchRandomArticle();
+    console.log(article + '\n');
+    let startURL = await fetchWithQueryString(article);
+    playGame(startURL);
+}
+
+//search the wikipedia API with the given search term
+async function playWithSearchTerm(term) {
+    let startURL = await fetchWithQueryString(term.trim());
+    playGame(startURL);
+}
+
+function playWithFullURL(url) {
+    if (validateURL(url)) {
+        playGame(url.trim());
+    } else {
+        console.log('Ei tuollainen haku kelpaa :D\n');
+        process.exit(0);
+    }
+}
+
+
+
 //the actual crawling through links
-function playGame(startURL) {
+async function playGame(startURL) {
 
     let currentURL = encodeURI(startURL);
 
@@ -91,60 +97,50 @@ function playGame(startURL) {
     let count = 0;
     let linksInSingleArticle = [];
 
-    async.whilst(
+    asy.whilst(
 
         () => { return currentURL !== null && currentURL !== targetLink && results.indexOf(currentURL) === -1 },
 
-        (callback) => {
+        async (callback) => {
 
-            axios.get(currentURL).then(response => {
+            let response = await axios.get(currentURL);
+            let $ = cheerio.load(response.data);
+            console.log($('.firstHeading').text());
+            let pText = $('#mw-content-text > p').text();
+            let indexOfFirstOpeningParenthesis = pText.indexOf('('); //find the indexOf first '('
+            let indexOfFirstClosingParenthesis = pText.indexOf(')'); //find the indexOf first ')'
 
-                let $ = cheerio.load(response.data);
-                console.log($('.firstHeading').text());
+            $('#mw-content-text > p a').each((i, elem) => {
+                let link = $(elem);
+                if (linkIsValid(link)) {
+                    let i = pText.indexOf(link.text());
 
-                let pText = $('#mw-content-text > p').text();
-
-                let indexOfFirstOpeningParenthesis = pText.indexOf('('); //find the indexOf first '('
-                let indexOfFirstClosingParenthesis = pText.indexOf(')'); //find the indexOf first ')'
-
-                $('#mw-content-text > p a').each((i, elem) => {
-                    let link = $(elem);
-
-                    if(filterOutWrongLinks(link)) {
-
-                        let i = pText.indexOf(link.text());
-
-                        if (!(i > indexOfFirstOpeningParenthesis && i < indexOfFirstClosingParenthesis)) { //check that the link is not between parentehses
-                            linksInSingleArticle.push(link.attr('href'));
-                        }
+                    if (!(i > indexOfFirstOpeningParenthesis && i < indexOfFirstClosingParenthesis)) {
+                        linksInSingleArticle.push(link.attr('href'));
                     }
-                })
-
-                results.push(currentURL);
-
-                //in case there is no link to follow
-                if (!linksInSingleArticle[0]) {
-                    console.log('\nHups!');
-                    console.log(`${$('.firstHeading').text()} ei johtanut mihinkään\n`);
-                    console.log(`¯\\_(ツ)_/¯\n\n`);
-                    process.exit(0);
                 }
-
-                currentURL = wikiURL + linksInSingleArticle[0];
-
-                console.log(currentURL);
-
-                count++;
-                console.log(count + '\n');
-
-                linksInSingleArticle = [];
-
-                callback(null, count);
             })
-            .catch(err => {
-                console.log('*********** ERROR ***********');
-                console.log(err);
-            })
+
+            results.push(currentURL);
+
+            //in case there is no link to follow
+            if (!linksInSingleArticle[0]) {
+                console.log('\nHups!');
+                console.log(`${$('.firstHeading').text()} ei johtanut mihinkään\n`);
+                console.log(`¯\\_(ツ)_/¯\n\n`);
+                process.exit(0);
+            }
+
+            currentURL = wikiURL + linksInSingleArticle[0];
+
+            console.log(currentURL);
+
+            count++;
+            console.log(count + '\n');
+
+            linksInSingleArticle = [];
+
+            callback(null, count);
 
         },
 
@@ -160,7 +156,6 @@ function playGame(startURL) {
         }
     )
 }
-
 
 
 async function fetchWithQueryString(query) {
@@ -188,7 +183,6 @@ async function fetchWithQueryString(query) {
 
 
 async function fetchRandomArticle() {
-
     let newLink;
 
     try {
@@ -217,7 +211,7 @@ async function fetchRandomArticle() {
 
 
 //takes a link (cheerio element) as input and returns true if it's valid, false otherwise
-function filterOutWrongLinks(link) {
+function linkIsValid(link) {
 
     const linkText = link.text();
     const linkHref = link.attr('href');
