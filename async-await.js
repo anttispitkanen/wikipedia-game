@@ -118,6 +118,22 @@ async function playGame(startURL) {
 
 }
 
+// /* FOR DEMOING */ 
+// function resolveAfterSecond(x) {
+//     return new Promise(resolve => {
+//         setTimeout(() => {
+//             resolve(x);
+//         }, 1000);
+//     });
+// }
+//
+// (async () => {
+//     for (let i = 0; i < 20; i++) {
+//         console.log('\n' + await resolveAfterSecond(i) + ' SECONDS PASSED\n');
+//     }
+// })();
+
+
 // takes a cheerio element of the loaded response data, returns the first valid link
 function findNextLink($) {
     let pText = $('#mw-content-text > p').text();
