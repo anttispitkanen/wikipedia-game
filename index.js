@@ -12,7 +12,7 @@ Antti Pitkänen 2017
 const cheerio = require('cheerio');
 const axios = require('axios');
 const readline = require('readline');
-const async = require('async');
+const asy = require('async');
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -45,14 +45,7 @@ rl.on('line', (line) => {
 
     if (line.length === 0) {
         // THIS WAY WITH EMPTY SEARCH
-        console.log('tässä random artikkeli:');
-        fetchRandomArticle().then(res => {
-            console.log(res +'\n');
-
-            fetchWithQueryString(res).then(startURL => {
-                playGame(startURL);
-            })
-        });
+        playRandom();
 
     //test if line is a query string or a link
     } else if (line.startsWith('http://') || line.startsWith('https://')) {
@@ -80,6 +73,17 @@ rl.on('line', (line) => {
 })
 
 
+function playRandom() {
+    fetchRandomArticle().then(res => {
+        console.log('tässä random artikkeli:');
+        console.log(res +'\n');
+
+        fetchWithQueryString(res).then(startURL => {
+            playGame(startURL);
+        })
+    });
+}
+
 //the actual crawling through links
 function playGame(startURL) {
 
@@ -89,7 +93,7 @@ function playGame(startURL) {
     let count = 0;
     let linksInSingleArticle = [];
 
-    async.whilst(
+    asy.whilst(
 
         () => { return currentURL !== null && currentURL !== targetLink && results.indexOf(currentURL) === -1 },
 
