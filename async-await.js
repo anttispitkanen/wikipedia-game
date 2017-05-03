@@ -11,7 +11,6 @@ Antti Pitkänen 2017
 const cheerio = require('cheerio');
 const axios = require('axios');
 const readline = require('readline');
-const asy = require('async');
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -81,6 +80,7 @@ function playWithFullURL(url) {
 }
 
 
+
 //the actual crawling through links
 async function playGame(startURL) {
 
@@ -89,42 +89,33 @@ async function playGame(startURL) {
     let results = [];
     let count = 0;
 
-    asy.whilst(
+    while (currentURL !== null && currentURL !== targetLink && results.indexOf(currentURL) === -1) {
 
-        () => { return currentURL !== null && currentURL !== targetLink && results.indexOf(currentURL) === -1 },
+        let response = await axios.get(currentURL);
+        let $ = cheerio.load(response.data);
+        console.log($('.firstHeading').text());
 
-        async (callback) => {
+        try {
+            let nextLink = findNextLink($);
+            results.push(currentURL);
+            count++;
+            currentURL = wikiURL + nextLink;
+            console.log(currentURL + '\n' + count + '\n');
 
-            let response = await axios.get(currentURL);
-            let $ = cheerio.load(response.data);
-            console.log($('.firstHeading').text());
-
-            try {
-                let nextLink = findNextLink($);
-                results.push(currentURL);
-                count++;
-                currentURL = wikiURL + nextLink;
-                console.log(currentURL + '\n' + count + '\n');
-
-            } catch (e) {
-                console.log(`\nHups!\n${$('.firstHeading').text()} ei johtanut mihinkään\n¯\\_(ツ)_/¯\n\n`);
-                process.exit(0);
-            }
-
-            callback(null, count);
-        },
-
-        (err, n) => {
-            if (results.indexOf(currentURL) === -1) {
-                console.log('\n\nVOITIT! :D');
-                console.log(`\nMeni ${count} steppiä Filosofiaan :D\n(${startURL})\n\n`);
-            } else {
-                console.log(`\nHups!\n\n${currentURL} aloitti luupin\n\n(╯°□°）╯︵ ┻━┻\n\n`);
-            }
-
+        } catch (e) {
+            console.log(`\nHups!\n${$('.firstHeading').text()} ei johtanut mihinkään\n¯\\_(ツ)_/¯\n\n`);
             process.exit(0);
         }
-    )
+    }
+
+    if (results.indexOf(currentURL) === -1) {
+        console.log(`\n\nVOITIT! :D\n\nMeni ${count} steppiä Filosofiaan :D\n(${startURL})\n\n`);
+    } else {
+        console.log(`\nHups!\n\n${currentURL} aloitti luupin\n\n(╯°□°）╯︵ ┻━┻\n\n`);
+    }
+
+    process.exit(0);
+
 }
 
 // takes a cheerio element of the loaded response data, returns the first valid link
