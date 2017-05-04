@@ -28,6 +28,7 @@ const wikiAPI = 'https://fi.wikipedia.org/w/api.php?action=opensearch&redirects=
 let startURL = null;
 let currentURL;
 
+
 console.log('\n========================================');
 console.log('\nPelataan Wikipedia-peliä!');
 console.log('Syötä mikä vaan suomenkielinen wikipedia-artikkeli (koko url tai hakusana), tyhjä hakee satunnaisen:');
@@ -118,7 +119,9 @@ async function playGame(startURL) {
 
 }
 
-// /* FOR DEMOING */ 
+
+
+// /* FOR DEMOING */
 // function resolveAfterSecond(x) {
 //     return new Promise(resolve => {
 //         setTimeout(() => {
@@ -129,9 +132,15 @@ async function playGame(startURL) {
 //
 // (async () => {
 //     for (let i = 0; i < 20; i++) {
-//         console.log('\n' + await resolveAfterSecond(i) + ' SECONDS PASSED\n');
+//         console.log('\n\n' + await resolveAfterSecond(i) + ' SECONDS PASSED\n\n\n');
 //     }
 // })();
+// /* FOR DEMOING */
+
+
+
+
+
 
 
 // takes a cheerio element of the loaded response data, returns the first valid link
@@ -162,7 +171,7 @@ function findNextLink($) {
 
 async function fetchWithQueryString(query) {
 
-    let queryURL = wikiAPI + query;
+    let queryURL = wikiAPI + encodeURIComponent(query);
     let returnURL = null;
 
     try {
