@@ -29,6 +29,10 @@ cd wikipedia-game
 npm install
 ```
 ```
+node async-await.js
+```
+Tai jos käytät < 7.6 versiota Nodesta:
+```
 node index.js
 ```
 Onnea peliin!
