@@ -1,24 +1,28 @@
 # Super awesome Wikipedia game :D
 
-Tiedät varmaan Wikipedia-pelin, jossa yritetään päästä jostain artikkelista artikkeliin filosofiasta?
-Nyt sitä ei tarvitse pelata itse!
+You probably know the Wikipedia oddity that [almost every article links eventually to Philosophy](https://en.wikipedia.org/wiki/Wikipedia:Getting_to_Philosophy)? Now you don't have to click yourself!
 
-Säännöt ovat yksinkertaiset – aloitetaan jostain artikkelista (url tai vapaa haku), ja mennään siitä
-ensimmäiseen leipätekstissä olevaan linkkiin, joka ei ole
-* sulkujen sisällä,
-* vuosiluku,
-* päivämäärä tai
-* yläviite (hakasulut)
+The rules are simple: you start from any article and move to the first link in the main body of text that's not
+* in parentheses,
+* in italic,
+* a year,
+* a date,
+* in red,
+* an external link or
+* a reference to the same page
 
-...ja seuraavissa artikkelissa sama homma.
+...and repeat the process in the article you end up in.
 
-Peli voitetaan, jos päästään filosofiaan. Kuinka pitkän polun löydät?
+You win the game if you can reach the article Philosophy. How long a path can you find?
 
-Peli hävitään, jos joudutaan luuppiin tai umpikujaan (=artikkeliin ilman kelvollisia linkkejä).
+You lose the game if you end up in a loop or a dead end (an article with no valid links).
 
-## Asennus
 
-Nyt Sinäkin voit pelata, asenna vain seuraavilla ohjeilla (Node.js vaaditaan):
+## Installation and playing
+
+Now you can play too in English or Finnish Wikipedia, just follow these steps (you need Node.js 7.6 or higher installed):
+
+
 ```
 git clone https://github.com/anttispitkanen/wikipedia-game.git
 ```
@@ -28,11 +32,16 @@ cd wikipedia-game
 ```
 npm install
 ```
+For English game:
 ```
-node async-await.js
+node english.js
 ```
-Tai jos käytät < 7.6 versiota Nodesta:
+For Finnish game:
 ```
-node index.js
+node finnish.js
 ```
-Onnea peliin!
+The Finnish version can also be run in older Node versions with
+```
+node old-finnish.js
+```
+Good luck and have fun!
