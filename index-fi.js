@@ -109,7 +109,7 @@ function playGame(startURL) {
                 let indexOfFirstOpeningParenthesis = pText.indexOf('('); //find the indexOf first '('
                 let indexOfFirstClosingParenthesis = pText.indexOf(')'); //find the indexOf first ')'
 
-                $('#mw-content-text > p a').each((i, elem) => {
+                $('#mw-content-text > p > a').each((i, elem) => {
                     let link = $(elem);
 
                     if(filterOutWrongLinks(link)) {

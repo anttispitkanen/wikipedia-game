@@ -5,6 +5,8 @@ A script for finding the article about philosophy on Wikipedia.
 
 This version uses async/await.
 
+FOR ENGLISH WIKIPEDIA.
+
 Antti Pitkänen 2017
 */
 
@@ -19,19 +21,19 @@ const rl = readline.createInterface({
 })
 
 
-const wikiURL = 'https://fi.wikipedia.org';
-const targetLink = 'https://fi.wikipedia.org/wiki/Filosofia';
+const wikiURL = 'https://en.wikipedia.org';
+const targetLink = 'https://en.wikipedia.org/wiki/Philosophy';
 // rnnamespace=0 searches from articles
-const randomURL = 'https://fi.wikipedia.org/w/api.php?action=query&list=random&format=json&rnlimit=1&rnnamespace=0';
-const wikiAPI = 'https://fi.wikipedia.org/w/api.php?action=opensearch&redirects=resolve&limit=1&search=';
+const randomURL = 'https://en.wikipedia.org/w/api.php?action=query&list=random&format=json&rnlimit=1&rnnamespace=0';
+const wikiAPI = 'https://en.wikipedia.org/w/api.php?action=opensearch&redirects=resolve&limit=1&search=';
 
 let startURL = null;
 let currentURL;
 
 
 console.log('\n========================================');
-console.log('\nPelataan Wikipedia-peliä!');
-console.log('Syötä mikä vaan suomenkielinen wikipedia-artikkeli (koko url tai hakusana), tyhjä hakee satunnaisen:');
+console.log('\nLet\'s play the Wikipedia game!');
+console.log('Enter any English Wikipedia article (full url or search term), empty query picks one at random:');
 
 rl.prompt();
 
@@ -58,7 +60,7 @@ rl.on('line', (line) => {
 
 
 async function playRandom() {
-    console.log('tässä random artikkeli:');
+    console.log('Here\'s a random article:');
     let article = await fetchRandomArticle();
     console.log(article + '\n');
     let startURL = await fetchWithQueryString(article);
@@ -75,7 +77,7 @@ function playWithFullURL(url) {
     if (validateURL(url)) {
         playGame(url.trim());
     } else {
-        console.log('Ei tuollainen haku kelpaa :D\n');
+        console.log('That kind of search won\'t do :D\n');
         process.exit(0);
     }
 }
@@ -104,15 +106,15 @@ async function playGame(startURL) {
             console.log(currentURL + '\n' + count + '\n');
 
         } catch (e) {
-            console.log(`\nHups!\n${$('.firstHeading').text()} ei johtanut mihinkään\n¯\\_(ツ)_/¯\n\n`);
+            console.log(`\nOops!\n${$('.firstHeading').text()} didn\'t get you anywhere\n¯\\_(ツ)_/¯\n\n`);
             process.exit(0);
         }
     }
 
     if (results.indexOf(currentURL) === -1) {
-        console.log(`\n\nVOITIT! :D\n\nMeni ${count} steppiä Filosofiaan :D\n(${startURL})\n\n`);
+        console.log(`\n\nVICTORY! :D\n\nIt took ${count} steps to Philosophy :D\n(${startURL})\n\n`);
     } else {
-        console.log(`\nHups!\n\n${currentURL} aloitti luupin\n\n(╯°□°）╯︵ ┻━┻\n\n`);
+        console.log(`\nOops!\n\n${currentURL} started a loop\n\n(╯°□°）╯︵ ┻━┻\n\n`);
     }
 
     process.exit(0);
@@ -150,7 +152,7 @@ function findNextLink($) {
     let indexOfFirstClosingParenthesis = pText.indexOf(')'); //find the indexOf first ')'
     let linksInSingleArticle = [];
 
-    $('#mw-content-text > p a').each((index, elem) => {
+    $('#mw-content-text > p > a').each((index, elem) => {
         let link = $(elem);
         if (linkIsValid(link)) {
             let i = pText.indexOf(link.text());
@@ -179,7 +181,7 @@ async function fetchWithQueryString(query) {
         let newLink = response.data[3][0];
 
         if (!newLink) {
-            console.log('\nEi löydy mitään, sori :D\n');
+            console.log('\nCan\'t find anything, sorry :D\n');
             process.exit(0);
         }
 
@@ -201,7 +203,7 @@ async function fetchRandomArticle() {
         newLink = response.data.query.random[0].title;
 
         if (!newLink) {
-            console.log('ei löydy linkkiä :/');
+            console.log('no link found :/');
             process.exit(0);
         }
 
@@ -230,11 +232,15 @@ function linkIsValid(link) {
     if(!linkText.match(/^\[/) && //filter out all remarks like "[1]"
         linkHref.startsWith('/wiki/') && //check that links are valid articles and not e.g. scripts
         !linkText.match(/^\d+$/) && //filter out years
-        !linkHref.match(/^\/wiki\/\d+\..+kuuta/) && //filter out dates
-        !linkHref.match(/^\/wiki\/Tiedosto:/) && //filter out files
+        // !linkHref.match(/^\/wiki\/\d+\..+kuuta/) && //filter out dates
+        !linkHref.match(/^\/wiki\/File:/) && //filter out files
         !linkHref.match(/^\/wiki\/Wikipedia:/) && //filter out whatever utility links these are
-        !linkHref.match(/^\/wiki\/Toiminnot:/) && //filter out actions
-        !linkHref.match(/^\/wiki\/Ohje:/)
+        !linkHref.match(/^\/wiki\/Special:/) && //filter out actions
+        !linkHref.match(/^\/wiki\/Template_talk:/) &&
+        !linkHref.match(/^\/wiki\/Portal:/) &&
+        !linkHref.match(/^\/wiki\/Main_Page:/) &&
+        !linkHref.match(/^\/wiki\/Category:/) &&
+        !linkHref.match(/^\/wiki\/Help:/)
     ) {
 
         return true;
@@ -245,11 +251,15 @@ function linkIsValid(link) {
 
 //takes a search string and returns true if it's valid, false otherwise
 function validateURL(url) {
-    if (url.match(/fi.wikipedia.org\/wiki\//) &&
-        !url.match(/fi.wikipedia.org\/wiki\/Toiminnot:/) &&
-        !url.match(/fi.wikipedia.org\/wiki\/Tiedosto:/) &&
-        !url.match(/fi.wikipedia.org\/wiki\/Ohje:/) &&
-        !url.match(/fi.wikipedia.org\/wiki\/Wikipedia:/)
+    if (url.match(/en.wikipedia.org\/wiki\//) &&
+        !url.match(/en.wikipedia.org\/wiki\/Main_Page/) &&
+        !url.match(/en.wikipedia.org\/wiki\/Portal:/) &&
+        !url.match(/en.wikipedia.org\/wiki\/Category:/) &&
+        !url.match(/en.wikipedia.org\/wiki\/File:/) &&
+        !url.match(/en.wikipedia.org\/wiki\/Template_talk:/) &&
+        !url.match(/en.wikipedia.org\/wiki\/Special:/) &&
+        !url.match(/en.wikipedia.org\/wiki\/Help:/) &&
+        !url.match(/en.wikipedia.org\/wiki\/Wikipedia:/)
     ) {
 
         return true;
